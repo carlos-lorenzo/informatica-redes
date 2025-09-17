@@ -15,6 +15,11 @@ def print_header(date: str) -> None:
     print("="*40)
 
 
-if __name__ == "__main__":
-    print_header("2024-06-15")
-    longitud = len("Lab_Practiva_1.py")
+def method_header(func: callable):
+    def wrapper(*args, **kwargs):
+        print(f"{'-'*10} {func.__name__.replace('_', ' ').title()} {'-'*10}")
+        output = func(*args, **kwargs)
+        print("\n")
+        return output
+
+    return wrapper
