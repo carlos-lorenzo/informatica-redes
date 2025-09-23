@@ -16,6 +16,15 @@ def print_header(date: str) -> None:
 
 
 def method_header(func: callable):
+    """
+    Decorator function that prints a header before calling the function.
+
+    Args:
+        func (callable): The function to be decorated.
+
+    Returns:
+        callable: The decorated function.
+    """
     def wrapper(*args, **kwargs):
         print(f"{'-'*10} {func.__name__.replace('_', ' ').title()} {'-'*10}")
         output = func(*args, **kwargs)
