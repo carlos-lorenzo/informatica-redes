@@ -1,0 +1,4 @@
+Esto es una cadena de caracteres
+2023
+3.14
+True

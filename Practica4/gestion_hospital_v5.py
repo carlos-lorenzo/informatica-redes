@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from utils import validate_input
 
 from person import Patient, Doctor
@@ -14,6 +16,53 @@ class Hospital:
 
         self._operating_rooms: dict[int, OperatingRoom] = {int(f"{floor.value}{str(num):02}"): OperatingRoom(f"{floor.value}{str(num):02}")
                                                            for floor in Floors for num in range(1, (operating_rooms // len(Floors)) + 1)}
+
+    def save_state(self) -> None:
+        with open(f"{self.hospital_name}_patients_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt", "a") as file:
+            for patient in self._patients.values():
+                file.write(
+                    f"{patient.name},{patient.first_surname},{patient.second_surname},{patient.id}\n")
+        with open(f"{self.hospital_name}_doctors_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt", "a") as file:
+            for doctor in self._doctors.values():
+                file.write(
+                    f"{doctor.name},{doctor.first_surname},{doctor.second_surname},{doctor.id}\n")
+        with open(f"{self.hospital_name}_bedrooms_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt", "a") as file:
+            for room in self._bedrooms.values():
+                file.write(f"{room.number},{room.is_occupied}\n")
+        with open(f"{self.hospital_name}_operating_rooms_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt", "a") as file:
+            for room in self._operating_rooms.values():
+                file.write(f"{room.number},{room.is_occupied}\n")
+        print("State saved successfully.")
+
+    def load_state(self) -> None:
+        timestamp = input(
+            "Enter the timestamp of the files to load (YYYY-MM-DD_HH-MM-SS): ")
+        try:
+            with open(f"{self.hospital_name}_patients_{timestamp}.txt", "r") as file:
+                for line in file:
+                    name, first_surname, second_surname, id = line.strip().split(",")
+                    self._patients[id] = Patient(
+                        name, first_surname, second_surname, int(id))
+            with open(f"{self.hospital_name}_doctors_{timestamp}.txt", "r") as file:
+                for line in file:
+                    name, first_surname, second_surname, id = line.strip().split(",")
+                    self._doctors[id] = Doctor(
+                        name, first_surname, second_surname, int(id), self.hospital_name)
+            with open(f"{self.hospital_name}_bedrooms_{timestamp}.txt", "r") as file:
+                for line in file:
+                    number, is_occupied = line.strip().split(",")
+                    room = BedRoom(number)
+                    room.is_occupied = is_occupied == 'True'
+                    self._bedrooms[int(number)] = room
+            with open(f"{self.hospital_name}_operating_rooms_{timestamp}.txt", "r") as file:
+                for line in file:
+                    number, is_occupied = line.strip().split(",")
+                    room = OperatingRoom(number)
+                    room.is_occupied = is_occupied == 'True'
+                    self._operating_rooms[int(number)] = room
+            print("State loaded successfully.")
+        except FileNotFoundError:
+            print("No previous state found. Starting fresh.")
 
     def add_patient(self) -> None:
         patient = Patient.generate_patient()
@@ -137,6 +186,14 @@ class Hospital:
             "10": {
                 "description": "View Operating Room Occupancy",
                 "action": self.view_operating_room_occupancy
+            },
+            "11": {
+                "description": "Save state to file",
+                "action": self.save_state
+            },
+            "12": {
+                "description": "Load state from file",
+                "action": self.load_state
             }
 
         }
