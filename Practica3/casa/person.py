@@ -24,12 +24,17 @@ class Patient(Person):
         return self._room_number
 
     @staticmethod
+    def create_patient(name: str, first_surname: str, second_surname: str, id: int) -> "Patient":
+        return Patient(name, first_surname, second_surname, id)
+
+    @staticmethod
     def generate_patient() -> "Patient":
         name = input("Enter patient's name: ")
         first_surname = input("Enter patient's first surname: ")
         second_surname = input("Enter patient's second surname: ")
         id = int(input("Enter patient's ID: "))
-        patient = Patient(name, first_surname, second_surname, id)
+        patient = Patient.create_patient(
+            name, first_surname, second_surname, id)
         return patient
 
 
@@ -42,10 +47,15 @@ class Doctor(Person):
         return f"Dr. {self.first_surname} {self.second_surname}, {self.name} (ID: {self.id}) at {self.hospital}"
 
     @staticmethod
+    def create_doctor(name: str, first_surname: str, second_surname: str, id: int, hospital_name: str) -> "Doctor":
+        return Doctor(name, first_surname, second_surname, id, hospital_name)
+
+    @staticmethod
     def generate_doctor(hospital_name: str) -> "Doctor":
         name = input("Enter doctor's name: ")
         first_surname = input("Enter doctor's first surname: ")
         second_surname = input("Enter doctor's second surname: ")
         id = int(input("Enter doctor's ID: "))
-        doctor = Doctor(name, first_surname, second_surname, id, hospital_name)
+        doctor = Doctor.create_doctor(
+            name, first_surname, second_surname, id, hospital_name)
         return doctor

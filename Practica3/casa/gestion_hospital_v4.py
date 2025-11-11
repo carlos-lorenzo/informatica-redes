@@ -63,6 +63,16 @@ class Hospital:
 
             print("-"*50)
 
+    def get_patient(self, i: int) -> Patient | None:
+        if 0 <= i < len(self._patients):
+            return list(self._patients.values())[i]
+        return None
+
+    def edit_patient(self, i: int, new_patient: Patient) -> None:
+        if 0 <= i < len(self._patients):
+            key = list(self._patients.keys())[i]
+            self._patients[key] = new_patient
+
     def toggle_bedroom_occupancy(self, room_number: int) -> None:
         room = self._bedrooms.get(
             room_number) or self._operating_rooms.get(room_number)
