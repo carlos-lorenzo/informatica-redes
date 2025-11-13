@@ -1,13 +1,17 @@
+import numpy as np
+
+from pgm_image import PGMImage
+
+
 class PGMReader:
     def __init__(self, filename):
         self.filename = filename
-        self.width = 0
-        self.height = 0
-        self.max_gray = 0
-        self.min_gray = 0
-        self.pixels = []
 
-    def read(self):
+    def read(self) -> PGMImage:
+        width = 0
+        height = 0
+        max_gray = 0
+        pixels = np.array([])
 
         with open(self.filename, 'r') as f:
             # Read magic number
@@ -19,37 +23,34 @@ class PGMReader:
             dimensions = f.readline().strip()
             while dimensions.startswith('#'):  # Skip comments
                 dimensions = f.readline().strip()
-            self.width, self.height = map(int, dimensions.split())
+            width, height = map(int, dimensions.split())
 
             # Read max gray value
             max_gray_line = f.readline().strip()
 
             while max_gray_line.startswith('#'):  # Skip comments
                 max_gray_line = f.readline().strip()
-            self.max_gray = int(max_gray_line)
-            self.min_gray = 0
+            max_gray = int(max_gray_line)
 
             # Read pixel data
-
             data = f.read()
-            self.pixels = list(
-                map(int, data.split())
-            )
+            pixels = np.array(
+                list(map(int, data.split()))
+            ).reshape((height, width))
 
-    def get_image_data(self):
-        return {
-            'width': self.width,
-            'height': self.height,
-            'max_gray': self.max_gray,
-            'pixels': self.pixels
-        }
+        return PGMImage(
+            width=width,
+            height=height,
+            max_gray=max_gray,
+            pixels=pixels
+        )
 
 
 if __name__ == "__main__":
     reader = PGMReader('Practica7/images/brain.pgm')
-    reader.read()
-    image_data = reader.get_image_data()
-    print(f"Width: {image_data['width']}")
-    print(f"Height: {image_data['height']}")
-    print(f"Max Gray: {image_data['max_gray']}")
-    print(f"Number of Pixels: {len(image_data['pixels'])}")
+    image_data = reader.read()
+
+    print(f"Width: {image_data.width}")
+    print(f"Height: {image_data.height}")
+    print(f"Max Gray: {image_data.max_gray}")
+    print(f"Number of Pixels: {len(image_data.pixels)}")
