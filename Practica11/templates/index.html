@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #container {
+            display: grid;
+            place-items: center;
+            place-content: center;
+            width: 100%;
+        }
+        form {
+            width: 50vw;
+            gap: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+    <title>Password Portal</title>
+</head>
+<body>
+    <div id="container">
+        <h1>Login Form</h1>
+        <form action="/login" method="get">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter name...">
+            <label for="pwd">Password</label>
+            <input type="text" id="pwd" name="pwd" placeholder="Enter Password...">
+            <button type="submit">Send</button>
+        </form>
+    
+    </div>
+    </body>
+</html>
