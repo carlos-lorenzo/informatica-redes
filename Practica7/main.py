@@ -1,6 +1,5 @@
 from image_reader import PGMReader
 from image_visualiser import ImageVisualiser
-from pgm_image import PGMImage
 from image_transformer import InvertTransformer, ThresholdTransformer, BrightnessTransformer, TransposeTransformer, MirrorTransformer
 
 
