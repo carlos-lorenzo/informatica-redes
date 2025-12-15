@@ -1,5 +1,7 @@
 import os
 from wsgiref.simple_server import make_server
+import threading
+
 from urllib.parse import parse_qs
 
 from networking import ClientUDP
@@ -57,11 +59,28 @@ def handle_login(environ):
     params = parse_qs(query_string)
     name = params.get("name", ["User"])[0]
     pwd = params.get("pwd", ["User"])[0]
-    pwd_client.send_to(f"{name}:{pwd}", "192.168.1.50", 8080)
-    message = pwd_client.listen()
-    _, code = message.get("data", {}).split(":")
 
-    if code == "OK":
+    # Container to store the result from the thread
+    auth_result = {"code": None}
+
+    def auth_worker():
+        # Create a local client instance for thread safety
+        client = ClientUDP()
+        client.send_to(f"{name}:{pwd}", "192.168.1.50", 8080)
+        message = client.listen()
+        # Safely get data and split
+        data = message.get("data", "")
+        if ":" in data:
+            _, code = data.split(":")
+            auth_result["code"] = code
+
+    # Create and start the thread
+    t = threading.Thread(target=auth_worker)
+    t.start()
+    # Wait for the thread to finish
+    t.join()
+
+    if auth_result.get('code', None) == "OK":
         with open("templates/success.html", "r", encoding="utf-8") as fp:
             return fp.read().replace("{{name}}", name)
     else:
